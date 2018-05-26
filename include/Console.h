@@ -25,7 +25,7 @@
 
 class Console {
 private:
-    Console() {}
+    Console() = default;
 
     inline static void innerPrint(std::ostream &stream) {}
 

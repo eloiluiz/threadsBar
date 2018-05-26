@@ -15,8 +15,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "../headers/Bar.h"
-#include "../headers/Console.h"
+#include "../include/Bar.h"
+#include "../include/Console.h"
 #include <algorithm>
 
 Bar::Bar(int N_CLIENTS, int N_WAITERS, int CAP_WAITERS, int ROUNDS) : N_CLIENTS(N_CLIENTS),
@@ -46,6 +46,9 @@ void Bar::open() {
         for (int i = 0; i < N_WAITERS; i++) {
             waiters.push_back(new Waiter(this, N_WAITERS));
         }
+
+        // Wait for threads to start
+        sleep(1);
     } else {
         Console::println("The Threads Bar won't open! There are no clients today.");
     }

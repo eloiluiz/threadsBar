@@ -15,8 +15,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "../headers/Client.h"
-#include "../headers/Console.h"
+#include "../include/Client.h"
+#include "../include/Console.h"
 
 Client::Client(Bar *bar) : bar(bar) {
     std::thread(&Client::run, this).detach();

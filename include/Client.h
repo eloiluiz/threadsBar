@@ -15,8 +15,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef THREADS_BAR_WAITER_H
-#define THREADS_BAR_WAITER_H
+#ifndef THREADS_BAR_CLIENT_H
+#define THREADS_BAR_CLIENT_H
 
 #include "Bar.h"
 #include <mutex>
@@ -27,29 +27,47 @@
 // Declaring dependencies
 class Bar;
 
-class Client;
+// Client state definition
+typedef enum clientState {
+    ORDERING,
+    WAITING,
+    CONSUMING,
+    IDLE,
+} client_state_t;
 
-class Waiter {
+class Client {
 public:
-    Waiter(Bar *bar, int CAP_WAITER);
+
+    explicit Client(Bar *bar);
 
     void run();
 
+    client_state_t getState();
+
+    bool hasOrder();
+
+    void order();
+
+    void waitOrder();
+
     void receiveOrder();
 
-    void prepareOrder();
-
-    void deliverOrder();
+    void consumesOrder();
 
 private:
+    // Bar reference
     Bar *bar;
-    const int CAP_WAITER;
 
-    // Orders queue
-    std::deque<Client *> orders;
+    // Client state definition
+    client_state_t state = ORDERING;
 
-    // Orders preparing time
+    // Orders consuming time
     std::random_device getRandomNumber;
+
+    // Order control
+    std::mutex m;
+    std::condition_variable cv;
 };
 
-#endif // THREADS_BAR_WAITER_H
+
+#endif // THREADS_BAR_CLIENT_H

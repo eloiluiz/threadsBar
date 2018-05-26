@@ -15,32 +15,44 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef THREADS_BAR_BARRIER_H
-#define THREADS_BAR_BARRIER_H
+#ifndef THREADS_BAR_WAITER_H
+#define THREADS_BAR_WAITER_H
 
+#include "Bar.h"
 #include <mutex>
+#include <random>
+#include <thread>
 #include <condition_variable>
 
-class Barrier {
+// Declaring dependencies
+class Bar;
+
+class Client;
+
+class Waiter {
 public:
-    explicit Barrier(int count) : count(count), total(count) {}
+    Waiter(Bar *bar, int CAP_WAITER);
 
-    void Wait() {
-        std::unique_lock<std::mutex> lock(m);
-        if (--count == 0) {
-            count = total;
-            cv.notify_all();
-        } else {
-            cv.wait(lock, [this] { return count == total; });
-        }
-    }
+    void run();
 
+    void receiveOrder();
+
+    void prepareOrder();
+
+    void deliverOrder();
 
 private:
-    int count;
-    int total;
-    std::mutex m;
-    std::condition_variable cv;
+    // Waiter definitions
+    const int CAP_WAITER;
+
+    // Bar reference
+    Bar *bar;
+
+    // Orders queue
+    std::deque<Client *> orders;
+
+    // Orders preparing time
+    std::random_device getRandomNumber;
 };
 
-#endif //THREADS_BAR_BARRIER_H
+#endif // THREADS_BAR_WAITER_H

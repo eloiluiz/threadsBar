@@ -15,10 +15,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "headers/Console.h"
-#include "headers/Bar.h"
+#include "../include/Console.h"
+#include "../include/Bar.h"
 
-int main() {
+int main(int argc, const char* argv[]) {
     Console::println("Starting Threads Bar Application");
 
     // Initialize random application parameters

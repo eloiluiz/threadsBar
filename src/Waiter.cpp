@@ -15,8 +15,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "../headers/Waiter.h"
-#include "../headers/Console.h"
+#include "../include/Waiter.h"
+#include "../include/Console.h"
 
 Waiter::Waiter(Bar *bar, const int CAP_WAITER) : bar(bar), CAP_WAITER(CAP_WAITER) {
     std::thread(&Waiter::run, this).detach();
