@@ -45,14 +45,14 @@ function.
 │   ├── Client.d
 │   ├── main.d
 │   └── Waiter.d
-└── src
+├── src
 │   ├── Bar.cpp
 │   ├── Client.cpp
 │   ├── main.cpp
 │   └── Waiter.cpp
 ├── LICENSE
 ├── makefile
-├── README.md
+└── README.md
 ```
 
 ## Compiling and Running
