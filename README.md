@@ -13,18 +13,20 @@ served.
 
 As for the clients, each can make up to one order per round. If a client decides to order at a certain round, he has to
 wait for a waiter to serve it before consuming the order (which also takes a random time).
+
 A new round can only start when every customer that ordered where served.
 
 ## Proposed Solution
 The project solves the threads bar concurrency problem by proposing the use of barriers. Barriers are used to
 delimit arbitrary stages in each round and synchronize each agent. The defined stages are:
-1. Order stage;
+
+1. Ordering stage;
 2. Serving stage;
 3. Consuming stage;
 
-In stage 1 each clients decides whether to order at current round and perform the necessary actions. For stage 2 the
-waiters start working by preparing each order and delivering it to each client. And finally, at round 3 the bar waits
-for the orders to be consumed before starting a new round.
+In stage 1 each client decides whether or not to order at current round and perform the necessary actions. For stage 2 
+the waiters start working by preparing each order and delivering it to each client. And finally, at round 3 the bar
+waits for the orders to be consumed before starting a new round.
 
 As the console screen is used to print agent messages and application related info it can also be considered as a
 critical region. To make sure each message is printed properly, this implementation presents a synchronized print
