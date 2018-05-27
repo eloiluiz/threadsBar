@@ -29,8 +29,8 @@ void Waiter::run() {
     // Start Waiter's logic
     while (bar->isOpen()) {
 
-        // Wait for clients to order
-        bar->waitClientsBarrier();
+        // Wait end of ordering stage
+        bar->waitStageBarrier();
 
         // Work to deliver every order
         while (bar->hasOrder()) {
@@ -47,7 +47,11 @@ void Waiter::run() {
         }
 
         Console::println("Waiter[", this, "] is waiting for the next round");
-        bar->waitWaitersBarrier();
+
+        // Notify end of serving stage
+        bar->waitStageBarrier();
+
+        // Actually wait for the start of next round
         bar->waitRoundBarrier();
     }
 

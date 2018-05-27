@@ -47,7 +47,7 @@ public:
         std::ostream stream(&buffer);
         // Feed input parameters to the stream object
         innerPrint(stream, head, tail...);
-        // Print into console and flush
+        // Print into console
         std::cout << buffer.str();
     }
 

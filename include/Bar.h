@@ -36,7 +36,7 @@ class Client;
  */
 class Bar {
 public:
-    Bar(int N_CLIENTS, int N_WAITERS, int CAP_WAITERS, int ROUNDS);
+    Bar(unsigned int N_CLIENTS, unsigned int N_WAITERS, unsigned int CAP_WAITERS, unsigned int ROUNDS);
 
     void open();
 
@@ -50,9 +50,7 @@ public:
 
     void waitRoundBarrier();
 
-    void waitClientsBarrier();
-
-    void waitWaitersBarrier();
+    void waitStageBarrier();
 
     int getRound();
 
@@ -71,16 +69,15 @@ private:
 
 private:
     // Bar definitions
-    const int ROUNDS;
-    const int N_CLIENTS;
-    const int N_WAITERS;
-    const int CAP_WAITERS;
+    const unsigned int ROUNDS;
+    const unsigned int N_CLIENTS;
+    const unsigned int N_WAITERS;
+    const unsigned int CAP_WAITERS;
 
     // Control objects
     Barrier *roundBarrier;
-    Barrier *clientsBarrier;
-    Barrier *waitersBarrier;
-    unsigned int round = 1;
+    Barrier *stageBarrier;
+    unsigned int round{1};
 
     // Bar collections
     std::mutex orders_mutex;

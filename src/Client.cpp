@@ -35,11 +35,16 @@ void Client::run() {
             waitOrder();
             consumesOrder();
         } else {
-            // Notify waiters
-            bar->waitClientsBarrier();
+            // Notify end of ordering stage
+            bar->waitStageBarrier();
         }
 
         Console::println("Client[", this, "] is waiting for the next round");
+
+        // Notify end of consuming stage
+        bar->waitStageBarrier();
+
+        // Actually wait for the start of next round
         bar->waitRoundBarrier();
     }
 
@@ -75,8 +80,8 @@ void Client::waitOrder() {
     state = WAITING;
     Console::println("Client[", this, "] is waiting for his order");
 
-    // Notify waiters
-    bar->waitClientsBarrier();
+    // Notify end of ordering stage
+    bar->waitStageBarrier();
 
     // Wait for his order
     std::unique_lock<std::mutex> lock(m);

@@ -21,23 +21,34 @@
 #include <mutex>
 #include <condition_variable>
 
+/**
+ * @brief Barrier class designed to provide a simple thread synchronisation mechanism used to cause a set of threads to
+ * wait until they each perform a certain function or each reach a particular point in their execution.
+ */
 class Barrier {
 public:
-    explicit Barrier(int count) : count(count), total(count) {}
+    explicit Barrier(unsigned int count) : count(count), total(count) {}
 
     void Wait() {
         std::unique_lock<std::mutex> lock(m);
         if (--count == 0) {
+            generation++;
             count = total;
             cv.notify_all();
         } else {
-            cv.wait(lock, [this] { return count == total; });
+            auto localGeneration = generation;
+            cv.wait(lock, [this, localGeneration] { return localGeneration != generation; });
         }
     }
 
 private:
-    int count;
-    int total;
+    // Defines the total number of threads synchronize
+    const unsigned int total;
+    // Counts the number of threads to wait at current generation
+    unsigned int count;
+    // Allows the reuse of an Barrier object, differentiating each point of synchronization as generations
+    unsigned int generation{0};
+    // Control objects
     std::mutex m;
     std::condition_variable cv;
 };

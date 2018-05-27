@@ -18,7 +18,7 @@
 #include "../include/Console.h"
 #include "../include/Bar.h"
 
-int main(int argc, const char* argv[]) {
+int main(int argc, const char *argv[]) {
     Console::println("Starting Threads Bar Application");
 
     // Initialize random application parameters
@@ -28,7 +28,7 @@ int main(int argc, const char* argv[]) {
     auto waitersCap = getRandomNumber() % 100;
     auto nRounds = getRandomNumber() % 5 + 1;
 
-    // Start application
+    // Start application by instantiating Bar and running its logic
     Bar bar(nClients, nWaiters, waitersCap, nRounds);
     bar.open();
     bar.run();

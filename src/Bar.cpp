@@ -19,23 +19,25 @@
 #include "../include/Console.h"
 #include <algorithm>
 
-Bar::Bar(int N_CLIENTS, int N_WAITERS, int CAP_WAITERS, int ROUNDS) : N_CLIENTS(N_CLIENTS),
-                                                                      N_WAITERS(N_WAITERS),
-                                                                      CAP_WAITERS(CAP_WAITERS),
-                                                                      ROUNDS(ROUNDS) {
+Bar::Bar(unsigned int N_CLIENTS, unsigned int N_WAITERS, unsigned int CAP_WAITERS, unsigned int ROUNDS) : N_CLIENTS(
+        N_CLIENTS),
+                                                                                                          N_WAITERS(
+                                                                                                                  N_WAITERS),
+                                                                                                          CAP_WAITERS(
+                                                                                                                  CAP_WAITERS),
+                                                                                                          ROUNDS(ROUNDS) {
     roundBarrier = new Barrier(N_CLIENTS + N_WAITERS + 1);
-    clientsBarrier = new Barrier(N_WAITERS + N_CLIENTS + 1);
-    waitersBarrier = new Barrier(N_WAITERS + 1);
+    stageBarrier = new Barrier(N_WAITERS + N_CLIENTS + 1);
 }
 
 Bar::~Bar() {
     delete roundBarrier;
-    delete clientsBarrier;
+    delete stageBarrier;
 }
 
 void Bar::open() {
     if (hasClients()) {
-        Console::println("\n\nThe Threads Bar is opening!");
+        Console::println("\nThe Threads Bar is opening!");
 
         // Create Client instances
         for (int i = 0; i < N_CLIENTS; i++) {
@@ -50,36 +52,41 @@ void Bar::open() {
         // Wait for threads to start
         sleep(1);
     } else {
-        Console::println("\n\nThe Threads Bar won't open! There are no clients today.");
+        Console::println("\nThe Threads Bar won't open! There are no clients today.");
     }
 }
 
 void Bar::run() {
-    while (isOpen()) {
-        Console::println("\n\nStarting round ", round, "!");
-        // Wait for current round to finish
+    // Check if there are client's at the Bar
+    if (hasClients()) {
+
+        // Start Bar's logic
+        while (isOpen()) {
+            Console::println("\nStarting round ", round, "!");
+            // Wait for current round to finish
+            roundBarrier->Wait();
+
+            // Wait for clients to order
+            stageBarrier->Wait();
+
+            // Wait for waiters to serve and clients finish consuming
+            stageBarrier->Wait();
+
+            // Update round parameters
+            round++;
+        }
+
+        // Finish rounds
+        Console::println("\nEnd of last round!");
         roundBarrier->Wait();
 
-        // Wait for clients to order
-        clientsBarrier->Wait();
-
-        // Wait for waiters to serve
-        waitersBarrier->Wait();
-
-        // Update round parameters
-        round++;
+        // Wait for threads to finish
+        sleep(1);
     }
-
-    // Finish rounds
-    Console::println("\n\nEnd of last round!");
-    roundBarrier->Wait();
-
-    // Wait for threads to finish
-    sleep(1);
 }
 
 void Bar::close() {
-    Console::println("\n\nThe Threads Bar is closing!");
+    Console::println("\nThe Threads Bar is closing!");
 
     // Print statistics
     printStatistics();
@@ -96,12 +103,8 @@ void Bar::waitRoundBarrier() {
     roundBarrier->Wait();
 }
 
-void Bar::waitClientsBarrier() {
-    clientsBarrier->Wait();
-}
-
-void Bar::waitWaitersBarrier() {
-    waitersBarrier->Wait();
+void Bar::waitStageBarrier() {
+    stageBarrier->Wait();
 }
 
 bool Bar::isOpen() {
