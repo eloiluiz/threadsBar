@@ -35,7 +35,7 @@ Bar::~Bar() {
 
 void Bar::open() {
     if (hasClients()) {
-        Console::println("The Threads Bar is opening!");
+        Console::println("\n\nThe Threads Bar is opening!");
 
         // Create Client instances
         for (int i = 0; i < N_CLIENTS; i++) {
@@ -50,7 +50,7 @@ void Bar::open() {
         // Wait for threads to start
         sleep(1);
     } else {
-        Console::println("The Threads Bar won't open! There are no clients today.");
+        Console::println("\n\nThe Threads Bar won't open! There are no clients today.");
     }
 }
 
@@ -71,6 +71,7 @@ void Bar::run() {
     }
 
     // Finish rounds
+    Console::println("\n\nEnd of last round!");
     roundBarrier->Wait();
 
     // Wait for threads to finish
@@ -78,7 +79,7 @@ void Bar::run() {
 }
 
 void Bar::close() {
-    Console::println("The Threads Bar is closing!");
+    Console::println("\n\nThe Threads Bar is closing!");
 
     // Print statistics
     printStatistics();

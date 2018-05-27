@@ -26,10 +26,11 @@ void Client::run() {
     Console::println("Client[", this, "] says: Hello!!");
     bar->waitRoundBarrier();
 
-    // Start client logic
+    // Start Client's logic
     while (bar->isOpen()) {
+
         // Check and manage client orders
-        if (hasOrder()) {
+        if (isOrdering()) {
             order();
             waitOrder();
             consumesOrder();
@@ -49,17 +50,17 @@ client_state_t Client::getState() {
     return state;
 }
 
-bool Client::hasOrder() {
-    // Check if the client will order at the current round
-    unsigned int pedido = getRandomNumber() % 10;
+bool Client::isOrdering() {
+    // Check if the client will order at current round
+    unsigned int willOrder = getRandomNumber() % 10;
 
     // Update client state and return the result
-    if (pedido < 9) {
+    if (willOrder < 9) {
         state = ORDERING;
         return true;
     } else {
         state = IDLE;
-        Console::println("Client[", this, "] wont order at round ", bar->getRound());
+        Console::println("Client[", this, "] won't order at round ", bar->getRound());
         return false;
     }
 }
@@ -87,17 +88,17 @@ void Client::receiveOrder() {
     state = CONSUMING;
     Console::println("Client[", this, "] is receiving his order");
 
-    // Receives the order and wakes up the client
+    // Receive the order and wakes up current client
     cv.notify_all();
 }
 
 void Client::consumesOrder() {
     Console::println("Client[", this, "] is consuming his order");
 
-    // Consumes order for a random time (up to 1 second)
+    // Consume order for a random time (up to 1 second)
     unsigned int time = getRandomNumber() % 1000000;
     usleep(time);
 
-    // Atualiza estado atual do cliente
+    // Update client state
     state = IDLE;
 }

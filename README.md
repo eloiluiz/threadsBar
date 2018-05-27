@@ -29,8 +29,8 @@ the waiters start working by preparing each order and delivering it to each clie
 waits for the orders to be consumed before starting a new round.
 
 As the console screen is used to print agent messages and application related info it can also be considered as a
-critical region. To make sure each message is printed properly, this implementation presents a synchronized print
-function.
+critical region. To make sure each message is printed properly this implementation presents an utility class to designed
+to compose string messages before calling the standard output stream and avoid concurrency problems.
 
 ## File Tree
 ```bash

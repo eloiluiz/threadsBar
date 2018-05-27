@@ -44,7 +44,7 @@ public:
 
     client_state_t getState();
 
-    bool hasOrder();
+    bool isOrdering();
 
     void order();
 

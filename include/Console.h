@@ -23,6 +23,10 @@
 #include <unistd.h>
 #include <mutex>
 
+/**
+ * @brief Console utility class designed to compose string messages before calling the standard output stream and avoid
+ * concurrency problems.
+ */
 class Console {
 private:
     Console() = default;
@@ -35,47 +39,21 @@ private:
         innerPrint(stream, tail...);
     }
 
-    inline static void innerPrintln(std::ostream &stream) {
-        stream << "\n";
-    }
-
-    template<typename Head, typename... Tail>
-    inline static void innerPrintln(std::ostream &stream, Head const head, Tail const ...tail) {
-        stream << head;
-        innerPrintln(stream, tail...);
-    }
-
 public:
     template<typename Head, typename... Tail>
     inline static void print(Head const head, Tail const ...tail) {
-        static std::mutex mutex;
         // Create a stream buffer
         std::stringbuf buffer;
         std::ostream stream(&buffer);
-        // Feed input parameters to stream
+        // Feed input parameters to the stream object
         innerPrint(stream, head, tail...);
-        // Enter critical region
-        mutex.lock();
-        // Print into console an flush
-        std::cout << buffer.str() << std::flush;
-        // Exit critical region
-        mutex.unlock();
+        // Print into console and flush
+        std::cout << buffer.str();
     }
 
     template<typename Head, typename... Tail>
     inline static void println(Head const head, Tail const ...tail) {
-        static std::mutex mutex;
-        // Create a stream buffer
-        std::stringbuf buffer;
-        std::ostream stream(&buffer);
-        // Feed input parameters to stream
-        innerPrintln(stream, head, tail...);
-        // Enter critical region
-        mutex.lock();
-        // Print into console an flush
-        std::cout << buffer.str() << std::flush;
-        // Exit critical region
-        mutex.unlock();
+        print(head, tail..., "\n");
     }
 };
 

@@ -25,8 +25,11 @@ Waiter::Waiter(Bar *bar, const int CAP_WAITER) : bar(bar), CAP_WAITER(CAP_WAITER
 void Waiter::run() {
     Console::println("Waiter[", this, "] says: Hello!!");
     bar->waitRoundBarrier();
+
+    // Start Waiter's logic
     while (bar->isOpen()) {
-        // Wait for client's orders
+
+        // Wait for clients to order
         bar->waitClientsBarrier();
 
         // Work to deliver every order
@@ -63,7 +66,7 @@ void Waiter::receiveOrder() {
         if (client != nullptr) {
             // Store the client's order
             orders.push_back(client);
-            Console::println("Waiter[", this, "] answers Client[", client, "]");
+            Console::println("Waiter[", this, "] receives an order from Client[", client, "]");
 
             // Give way to another waiter
             std::this_thread::yield();
@@ -73,11 +76,11 @@ void Waiter::receiveOrder() {
 
 void Waiter::prepareOrder() {
 
-    // Prepares each order
+    // Prepare each order
     for (auto order : orders) {
         Console::println("Waiter[", this, "] is preparing order from Client[", order, "]");
 
-        // Takes up to 1 second to prepare each order
+        // Prepare order for a random time (up to 1 second)
         unsigned int time = getRandomNumber() % 1000000;
         usleep(time);
     }
@@ -92,7 +95,7 @@ void Waiter::deliverOrder() {
         Client *client = orders.front();
         orders.pop_front();
 
-        // Entrega pedido do cliente
+        // Delivers the client's order
         client->receiveOrder();
         Console::println("Waiter[", this, "] delivered an order to Client[", client, "]");
     }
